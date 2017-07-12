@@ -33,8 +33,11 @@ const int KNOB_PIN = 0;
 const int MIN_IN = 0;
 const int MAX_IN = 1023;
 
-const int MIN_C = 600;
-const int MAX_C = 1200;
+//const int MIN_C = 600;
+//const int MAX_C = 1200;
+
+const int MIN_C = -2000;
+const int MAX_C = 1700;
 
 const int MIN_F = 400;
 const int MAX_F = 1200;
@@ -43,7 +46,7 @@ AutoMap kMapF(MIN_IN,MAX_IN,MIN_F,MAX_F);
 AutoMap kMapC(MIN_C,MAX_C,MIN_F,MAX_F);
 
 RollingAverage <int, 16> FAverage; 
-RollingAverage <int, 16> CapAverage; 
+RollingAverage <int, 64> CapAverage; 
 
 void setup(){
   startMozzi(CONTROL_RATE); // set a control rate of 64 (powers of 2 please)
@@ -69,7 +72,7 @@ capsense1 = kMapC(capsense1);
 Serial.print(capsense1);
 Serial.println("  ");
   
-  aSin.setFreq(fundamental); // set the frequency
+  //aSin.setFreq(fundamental); // set the frequency
   aSin.setFreq(capsense1); // set the frequency
     float R = aSin.next();
 //    Serial.print(R);
