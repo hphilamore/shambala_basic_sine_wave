@@ -60,8 +60,8 @@ void updateControl(){
 int fundamental = mozziAnalogRead(KNOB_PIN)+1;
 //fundamental = FAverage.next(fundamental);
 fundamental = kMapF(fundamental);
-Serial.print(fundamental);
-Serial.print("  ");
+//Serial.print(fundamental);
+//Serial.print("  ");
 
 long capsense1_ =  cs_3_4.capacitiveSensor(1);
 int capsense1 = (int) capsense1_;
@@ -69,14 +69,14 @@ capsense1 = CapAverage.next(capsense1);
 capsense1 = kMapC(capsense1);
 //Serial.print(capsense1_);
 //Serial.print("  ");
-Serial.print(capsense1);
-Serial.println("  ");
-  
+//Serial.print(capsense1);
+//Serial.println("  ");
+  //
   //aSin.setFreq(fundamental); // set the frequency
   aSin.setFreq(capsense1); // set the frequency
     float R = aSin.next();
-//    Serial.print(R);
-//    Serial.println("  ");
+    Serial.print(R);
+    Serial.println("  ");
 }
 
 
