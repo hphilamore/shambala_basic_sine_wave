@@ -20,6 +20,8 @@
 #include <RollingAverage.h>
 #include <CapacitiveSensor.h>
 
+//#define AUDIO_MODE HIFI
+
 // use: Oscil <table_size, update_rate> oscilName (wavetable), look in .h file of table #included above
 Oscil <SIN2048_NUM_CELLS, AUDIO_RATE> aSin(SIN2048_DATA);
 
@@ -33,14 +35,14 @@ const int KNOB_PIN = 0;
 const int MIN_IN = 0;
 const int MAX_IN = 1023;
 
-//const int MIN_C = 600;
-//const int MAX_C = 1200;
+const int MIN_C = 0;
+const int MAX_C = 400;
 
-const int MIN_C = -2000;
-const int MAX_C = 1700;
+//const int MIN_C = -2000;
+//const int MAX_C = 1700;
 
-const int MIN_F = 400;
-const int MAX_F = 1200;
+const int MIN_F = 600;
+const int MAX_F = 200;
 
 AutoMap kMapF(MIN_IN,MAX_IN,MIN_F,MAX_F);
 AutoMap kMapC(MIN_C,MAX_C,MIN_F,MAX_F);
@@ -69,13 +71,17 @@ capsense1 = CapAverage.next(capsense1);
 capsense1 = kMapC(capsense1);
 //Serial.print(capsense1_);
 //Serial.print("  ");
-//Serial.print(capsense1);
-//Serial.println("  ");
+Serial.print(capsense1_);
+Serial.print("  ");
+Serial.print(capsense1);
+Serial.print("  ");
   //
   //aSin.setFreq(fundamental); // set the frequency
   aSin.setFreq(capsense1); // set the frequency
-    float R = aSin.next();
-    Serial.print(R);
+//    float R = aSin.next();
+//    Serial.print(R);
+//    Serial.print("  ");
+    
     Serial.println("  ");
 }
 
