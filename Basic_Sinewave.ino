@@ -40,14 +40,17 @@ const int KNOB_PIN = 0;
 const int MIN_IN = 0;
 const int MAX_IN = 1023;
 
-const int MIN_C = -400;
-const int MAX_C = 400;
+const int MIN_C = 0;
+const int MAX_C = 800;
 
 //const int MIN_C = -2000;
 //const int MAX_C = 1700;
 
-const int MIN_F = 1000;
-const int MAX_F = 200;
+const int MIN_F = 200;
+const int MAX_F = 500;
+
+//const int MIN_F = 1000;
+//const int MAX_F = 200;
 
 AutoMap kMapF(MIN_IN,MAX_IN,MIN_F,MAX_F);
 AutoMap kMapC(MIN_C,MAX_C,MIN_F,MAX_F);
@@ -87,7 +90,7 @@ fundamental = kMapF(fundamental);
 //int capsense1 = Cap1Average.next((int) capsense1_);
 //capsense1 = kMapC(capsense1);
 int capsense1 = Cap1Average.next((int) ((long) cs_3_4.capacitiveSensor(NUM_SAMPLES)));
-//capsense1 = kMapC(capsense1);
+capsense1 = kMapC(capsense1);
 
 int capsense2 = Cap2Average.next((int) ((long) cs_5_6.capacitiveSensor(NUM_SAMPLES)));
 //capsense2 = kMapC(capsense2);
@@ -100,8 +103,8 @@ Serial.print("  ");
 Serial.print(capsense2);
 Serial.print("  ");
 
-Serial.print(gain);
-Serial.print("  ");
+//Serial.print(gain);
+//Serial.print("  ");
 
 
 
@@ -118,7 +121,7 @@ Serial.print("  ");
 
 int updateAudio(){
 //  return aSin.next(); // return an int signal centred around 0
-  return (aSin.next()* gain)>>8; //
+  return (aSin.next() * gain)>>8; //
 }
 
 
