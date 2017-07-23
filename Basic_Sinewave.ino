@@ -28,6 +28,7 @@
 // use: Oscil <table_size, update_rate> oscilName (wavetable), look in .h file of table #included above
 //Oscil <SIN2048_NUM_CELLS, AUDIO_RATE> aSin(SIN2048_DATA);
 Oscil <SIN8192_NUM_CELLS, AUDIO_RATE> aSin(SIN8192_DATA);
+Oscil <SIN8192_NUM_CELLS, AUDIO_RATE> aModulator(SIN8192_DATA);
 //Oscil <UPHASOR256_NUM_CELLS, AUDIO_RATE> aSin(UPHASOR256_DATA);
 //Oscil <CHEBYSHEV_6TH_256_NUM_CELLS, AUDIO_RATE> aSin(CHEBYSHEV_6TH_256_DATA);
 
@@ -39,7 +40,10 @@ CapacitiveSensor   cs_5_6 = CapacitiveSensor(5,6);
 #define NUM_SAMPLES 3 //
 
 // control variable, use the smallest data size you can for anything used in audio
-byte gain = 255;
+byte gain = 150;
+
+int mod_ratio = 2; // harmonics
+long fm_intensity; // carries control info from updateControl() to updateAudio()
 
 const int KNOB_PIN = 0; 
 
@@ -58,8 +62,15 @@ const int MAX_F = 500;
 //const int MIN_F = 1000;
 //const int MAX_F = 200;
 
+const int MIN_C2 = 0;
+const int MAX_C2 = 400;
+
+const int MIN_F2 = 10;
+const int MAX_F2 = 200;
+
 AutoMap kMapF(MIN_IN,MAX_IN,MIN_F,MAX_F);
 AutoMap kMapC(MIN_C,MAX_C,MIN_F,MAX_F);
+AutoMap kMapC2(MIN_C2,MAX_C2,MIN_F2,MAX_F2);
 
 RollingAverage <int, 16> FAverage; 
 RollingAverage <int, 64> Cap1Average; 
@@ -96,12 +107,12 @@ fundamental = kMapF(fundamental);
 //int capsense1 = Cap1Average.next((int) capsense1_);
 //capsense1 = kMapC(capsense1);
 int capsense1 = Cap1Average.next((int) ((long) cs_3_4.capacitiveSensor(NUM_SAMPLES)));
-capsense1 = kMapC(capsense1);
+//capsense1 = kMapC(capsense1);
 
 int capsense2 = Cap2Average.next((int) ((long) cs_5_6.capacitiveSensor(NUM_SAMPLES)));
 //capsense2 = kMapC(capsense2);
 
-gain = capsense2;
+//gain = capsense2;
 
 Serial.print(capsense1);
 Serial.print("  ");
@@ -114,7 +125,13 @@ Serial.print("  ");
 
 aSin.setFreq(capsense1); // set the frequency
 
+int mod_freq = capsense1 * mod_ratio;
 
+aModulator.setFreq(mod_freq);
+
+fm_intensity = capsense2;
+
+//fm_intensity = 10;
   
 //    float R = aSin.next();
 //    Serial.print(R);
@@ -126,7 +143,10 @@ aSin.setFreq(capsense1); // set the frequency
 
 int updateAudio(){
 //  return aSin.next(); // return an int signal centred around 0
-  return (aSin.next() * gain)>>8; //
+  //return (aSin.next() * gain)>>8; //
+
+  long modulation = fm_intensity * aModulator.next(); 
+  return (aSin.phMod(modulation)* gain)>>8; // phMod does the FM
 }
 
 
