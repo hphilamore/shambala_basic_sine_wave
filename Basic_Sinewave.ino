@@ -70,19 +70,31 @@ fundamental = kMapF(fundamental);
 //Serial.print(fundamental);
 //Serial.print("  ");
 
-long capsense1_ =  cs_3_4.capacitiveSensor(NUM_SAMPLES);
-int capsense1 = (int) capsense1_;
-capsense1 = Cap1Average.next(capsense1);
-capsense1 = kMapC(capsense1);
+
+
 //Serial.print(capsense1_);
 //Serial.print("  ");
-Serial.print(capsense1_);
-Serial.print("  ");
+//Serial.print(capsense1_);
+//Serial.print("  ");
+
+//long capsense1_ =  cs_3_4.capacitiveSensor(NUM_SAMPLES);
+//int capsense1 = Cap1Average.next((int) capsense1_);
+//capsense1 = kMapC(capsense1);
+int capsense1 = Cap1Average.next((int) ((long) cs_3_4.capacitiveSensor(NUM_SAMPLES)));
+//capsense1 = kMapC(capsense1);
+
+int capsense2 = Cap2Average.next((int) ((long) cs_5_6.capacitiveSensor(NUM_SAMPLES)));
+//capsense2 = kMapC(capsense2);
+
+
 Serial.print(capsense1);
+Serial.print("  ");
+
+Serial.print(capsense2);
 Serial.print("  ");
   //
   //aSin.setFreq(fundamental); // set the frequency
-  aSin.setFreq(capsense1); // set the frequency
+  aSin.setFreq(capsense2); // set the frequency
 //    float R = aSin.next();
 //    Serial.print(R);
 //    Serial.print("  ");
