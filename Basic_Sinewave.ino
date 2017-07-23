@@ -20,57 +20,45 @@
 #include <RollingAverage.h>
 #include <CapacitiveSensor.h>
 
-
 //#define AUDIO_MODE HIFI
 
 // use: Oscil <table_size, update_rate> oscilName (wavetable), look in .h file of table #included above
 Oscil <SIN2048_NUM_CELLS, AUDIO_RATE> aSin(SIN2048_DATA);
 
-CapacitiveSensor   cs_3_4 = CapacitiveSensor(4,2); 
-//CapacitiveSensor   cs_5_6 = CapacitiveSensor(4,6);
-
+CapacitiveSensor   cs_3_4 = CapacitiveSensor(3,4); 
+CapacitiveSensor   cs_5_6 = CapacitiveSensor(5,6); 
 
 // use #define for CONTROL_RATE, not a constant
 #define CONTROL_RATE 64 // powers of 2 please
-#define NUM_SAMPLES 1
-
-int sensVal;           // for raw sensor values 
-float filterVal = 0.0001;       // this determines smoothness  - .0001 is max  1 is off (no smoothing)
-float smoothedVal1;     // this holds the last loop value just use a unique variable for every different sensor that needs smoothing
-float smoothedVal2; 
-
-int i, j;              // loop counters or demo    
+# define NUM_SAMPLES 3 //
 
 const int KNOB_PIN = 0; 
 
 const int MIN_IN = 0;
 const int MAX_IN = 1023;
 
-const int MIN_C = -100;
-const int MAX_C = 100;
- 
+const int MIN_C = -400;
+const int MAX_C = 400;
+
 //const int MIN_C = -2000;
 //const int MAX_C = 1700;
 
-const int MIN_F = 300;
-const int MAX_F = 600;
-
-int capsense1;
-int pastcapsense1;
+const int MIN_F = 1000;
+const int MAX_F = 200;
 
 AutoMap kMapF(MIN_IN,MAX_IN,MIN_F,MAX_F);
 AutoMap kMapC(MIN_C,MAX_C,MIN_F,MAX_F);
 
-RollingAverage <int, 512> FAverage; 
-RollingAverage <int,512> CapAverage;
-RollingAverage <int, 512> Cap2Average; 
+RollingAverage <int, 16> FAverage; 
+RollingAverage <int, 64> Cap1Average; 
+RollingAverage <int, 64> Cap2Average; 
 
 void setup(){
   startMozzi(CONTROL_RATE); // set a control rate of 64 (powers of 2 please)
   //aSin.setFreq(440); // set the frequency
   Serial.begin(115200);
-cs_3_4.set_CS_AutocaL_Millis(0xFFFFFFFF);
-//cs_5_6.set_CS_AutocaL_Millis(0xFFFFFFFF);
+  cs_3_4.set_CS_AutocaL_Millis(0xFFFFFFFF);
+  cs_5_6.set_CS_AutocaL_Millis(0xFFFFFFFF);
 }
 
 
@@ -82,46 +70,16 @@ fundamental = kMapF(fundamental);
 //Serial.print(fundamental);
 //Serial.print("  ");
 
-//pastcapsense1 = capsense1;
-
-Serial.print(pastcapsense1);
-Serial.print("  ");
-
 long capsense1_ =  cs_3_4.capacitiveSensor(NUM_SAMPLES);
 int capsense1 = (int) capsense1_;
-capsense1 = CapAverage.next(capsense1);
-
+capsense1 = Cap1Average.next(capsense1);
+capsense1 = kMapC(capsense1);
+//Serial.print(capsense1_);
+//Serial.print("  ");
+Serial.print(capsense1_);
+Serial.print("  ");
 Serial.print(capsense1);
 Serial.print("  ");
-
-//capsense1 = kMapC(smoothedVal1);
-//capsense1 = kMapC(capsense1);
-int diff1 = (capsense1 - pastcapsense1);
-Serial.print(diff1*10);
-Serial.print("  ");
-
-pastcapsense1 = capsense1;
-
-//Serial.print(pastcapsense1);
-//Serial.print("  ");
-
-//long capsense2_ =  cs_5_6.capacitiveSensor(NUM_SAMPLES);
-//int capsense2 = (int) capsense2_;
-//smoothedVal2 = Cap2Average.next(capsense2);
-////capsense2 = kMapC(smoothedVal2);
-//int diff2 = (smoothedVal2 - oldsmoothedVal2);
-//int smoothedVal2 = oldsmoothedVal2;
-
-//Serial.print(capsense1_);
-//Serial.print("  ");
-//Serial.print(capsense1_);
-//Serial.print("  ");
-
-
-
-
-//Serial.print(capsense2);
-//Serial.print("  ");
   //
   //aSin.setFreq(fundamental); // set the frequency
   aSin.setFreq(capsense1); // set the frequency
@@ -136,23 +94,6 @@ pastcapsense1 = capsense1;
 int updateAudio(){
   return aSin.next(); // return an int signal centred around 0
 }
-
-
-int smooth(int data, float filterVal, float smoothedVal){
-
-
-  if (filterVal > 1){      // check to make sure param's are within range
-    filterVal = .99;
-  }
-  else if (filterVal <= 0){
-    filterVal = 0;
-  }
-
-  smoothedVal = (data * (1 - filterVal)) + (smoothedVal  *  filterVal);
-
-  return (int)smoothedVal;
-}
-
 
 
 void loop(){
