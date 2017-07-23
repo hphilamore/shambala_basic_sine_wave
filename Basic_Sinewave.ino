@@ -30,7 +30,10 @@ CapacitiveSensor   cs_5_6 = CapacitiveSensor(5,6);
 
 // use #define for CONTROL_RATE, not a constant
 #define CONTROL_RATE 64 // powers of 2 please
-# define NUM_SAMPLES 3 //
+#define NUM_SAMPLES 3 //
+
+// control variable, use the smallest data size you can for anything used in audio
+byte gain = 255;
 
 const int KNOB_PIN = 0; 
 
@@ -67,6 +70,9 @@ void updateControl(){
 int fundamental = mozziAnalogRead(KNOB_PIN)+1;
 //fundamental = FAverage.next(fundamental);
 fundamental = kMapF(fundamental);
+
+//gain = gain - 3 ; 
+
 //Serial.print(fundamental);
 //Serial.print("  ");
 
@@ -86,12 +92,19 @@ int capsense1 = Cap1Average.next((int) ((long) cs_3_4.capacitiveSensor(NUM_SAMPL
 int capsense2 = Cap2Average.next((int) ((long) cs_5_6.capacitiveSensor(NUM_SAMPLES)));
 //capsense2 = kMapC(capsense2);
 
+gain = capsense2;
 
 Serial.print(capsense1);
 Serial.print("  ");
 
 Serial.print(capsense2);
 Serial.print("  ");
+
+Serial.print(gain);
+Serial.print("  ");
+
+
+
   //
   //aSin.setFreq(fundamental); // set the frequency
   aSin.setFreq(capsense2); // set the frequency
@@ -104,7 +117,8 @@ Serial.print("  ");
 
 
 int updateAudio(){
-  return aSin.next(); // return an int signal centred around 0
+//  return aSin.next(); // return an int signal centred around 0
+  return (aSin.next()* gain)>>8; //
 }
 
 
