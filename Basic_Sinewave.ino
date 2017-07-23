@@ -16,6 +16,9 @@
 #include <MozziGuts.h>
 #include <Oscil.h> // oscillator template
 #include <tables/sin2048_int8.h> // sine table for oscillator
+#include <tables/sin8192_int8.h> // sine table for oscillator
+#include <tables/uphasor256_uint8.h> // sine table for oscillator
+#include <tables/waveshape_chebyshev_6th_256_int8.h> // sine table for oscillator
 #include <AutoMap.h>
 #include <RollingAverage.h>
 #include <CapacitiveSensor.h>
@@ -23,7 +26,10 @@
 //#define AUDIO_MODE HIFI
 
 // use: Oscil <table_size, update_rate> oscilName (wavetable), look in .h file of table #included above
-Oscil <SIN2048_NUM_CELLS, AUDIO_RATE> aSin(SIN2048_DATA);
+//Oscil <SIN2048_NUM_CELLS, AUDIO_RATE> aSin(SIN2048_DATA);
+Oscil <SIN8192_NUM_CELLS, AUDIO_RATE> aSin(SIN8192_DATA);
+//Oscil <UPHASOR256_NUM_CELLS, AUDIO_RATE> aSin(UPHASOR256_DATA);
+//Oscil <CHEBYSHEV_6TH_256_NUM_CELLS, AUDIO_RATE> aSin(CHEBYSHEV_6TH_256_DATA);
 
 CapacitiveSensor   cs_3_4 = CapacitiveSensor(3,4); 
 CapacitiveSensor   cs_5_6 = CapacitiveSensor(5,6); 
@@ -95,7 +101,7 @@ capsense1 = kMapC(capsense1);
 int capsense2 = Cap2Average.next((int) ((long) cs_5_6.capacitiveSensor(NUM_SAMPLES)));
 //capsense2 = kMapC(capsense2);
 
-gain = capsense2;
+//gain = capsense2;
 
 Serial.print(capsense1);
 Serial.print("  ");
