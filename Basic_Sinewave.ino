@@ -101,7 +101,7 @@ capsense1 = kMapC(capsense1);
 int capsense2 = Cap2Average.next((int) ((long) cs_5_6.capacitiveSensor(NUM_SAMPLES)));
 //capsense2 = kMapC(capsense2);
 
-//gain = capsense2;
+gain = capsense2;
 
 Serial.print(capsense1);
 Serial.print("  ");
@@ -112,11 +112,10 @@ Serial.print("  ");
 //Serial.print(gain);
 //Serial.print("  ");
 
+aSin.setFreq(capsense1); // set the frequency
 
 
-  //
-  //aSin.setFreq(fundamental); // set the frequency
-  aSin.setFreq(capsense2); // set the frequency
+  
 //    float R = aSin.next();
 //    Serial.print(R);
 //    Serial.print("  ");
